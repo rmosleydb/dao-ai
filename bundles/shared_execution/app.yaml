@@ -1,0 +1,10 @@
+command: ["pip", "install", "dao-ai", "&&", "python", "-m", "dao_ai.apps.shared_server"]
+# Databricks Apps listen by default on port 8000
+
+env:
+  - name: MLFLOW_TRACKING_URI
+    value: "databricks"
+  - name: MLFLOW_REGISTRY_URI
+    value: "databricks-uc"
+  - name: LOG_LEVEL
+    value: "INFO"

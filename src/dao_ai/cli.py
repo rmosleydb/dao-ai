@@ -341,6 +341,31 @@ Examples:
         "or defaults to 'model_serving'.",
     )
 
+    # Register command (UC registration only, no deployment)
+    register_parser: ArgumentParser = subparsers.add_parser(
+        "register",
+        help="Register agent to Unity Catalog without deploying an endpoint",
+        description="""
+Register the DAO AI agent to Unity Catalog without deploying a dedicated Model Serving
+endpoint or Databricks App. Use this when agents will be executed via the shared
+execution layer rather than a dedicated endpoint.
+        """,
+        epilog="""
+Examples:
+  dao-ai register -c config/my_agent.yaml          # Register agent to UC
+  dao-ai register -c config/my_agent.yaml -v       # Register with verbose output
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    register_parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        required=True,
+        metavar="FILE",
+        help="Path to the model configuration file",
+    )
+
     # List MCP tools command
     list_mcp_parser: ArgumentParser = subparsers.add_parser(
         "list-mcp-tools",
@@ -839,6 +864,21 @@ def handle_graph_command(options: Namespace) -> None:
     config: AppConfig = AppConfig.from_file(options.config)
     app = create_dao_ai_graph(config)
     save_image(app, options.output)
+
+
+def handle_register_command(options: Namespace) -> None:
+    logger.debug(f"Loading configuration from {options.config}...")
+    try:
+        config: AppConfig = AppConfig.from_file(options.config)
+        config.create_agent()
+        logger.success(
+            "Agent registered to Unity Catalog. "
+            "Use the shared execution layer to invoke it."
+        )
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Registration failed: {e}")
+        sys.exit(1)
 
 
 def handle_deploy_command(options: Namespace) -> None:
@@ -1463,6 +1503,8 @@ def main() -> None:
             handle_graph_command(options)
         case "bundle":
             handle_bundle_command(options)
+        case "register":
+            handle_register_command(options)
         case "deploy":
             handle_deploy_command(options)
         case "monitor":
