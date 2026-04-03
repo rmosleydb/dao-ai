@@ -1,4 +1,15 @@
-command: ["pip", "install", "dao-ai", "&&", "python", "-m", "dao_ai.apps.shared_server"]
+command:
+  - /bin/bash
+  - -c
+  - |
+    pip install dao-ai &&
+    CHAT_UI_DIR=$(python3 -c "import dao_ai.apps.chat_ui as m; import os; print(os.path.dirname(m.__file__))") 2>/dev/null ||
+    CHAT_UI_DIR=$(python3 -c "import dao_ai; import os; print(os.path.join(os.path.dirname(dao_ai.__file__), 'apps', 'chat_ui'))")
+    if [ -f "$CHAT_UI_DIR/package.json" ]; then
+      echo "Building chat UI..."
+      cd "$CHAT_UI_DIR" && npm install --silent && npm run build
+    fi
+    python -m dao_ai.apps.shared_server
 # Databricks Apps listen by default on port 8000
 
 env:
