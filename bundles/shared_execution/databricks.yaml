@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schemas/bundle_config_schema.json
+
+bundle:
+  name: dao-ai-shared-execution
+
+variables:
+  app_name:
+    description: Name for the shared execution Databricks App.
+    default: dao-ai-shared
+  app_description:
+    description: Description for the shared execution app.
+    default: "DAO AI shared agent execution layer. Runs any UC-registered agent on demand."
+
+resources:
+  apps:
+    shared_execution_app:
+      name: ${var.app_name}
+      description: ${var.app_description}
+      source_code_path: ${workspace.root_path}/files
+
+targets:
+  development:
+    mode: development
+    workspace:
+      root_path: /Workspace/Users/robert.mosley@databricks.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      app_name: dao-ai-shared-dev
+
+  staging:
+    workspace:
+      root_path: /Workspace/Users/robert.mosley@databricks.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      app_name: dao-ai-shared-staging
+
+  production:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/robert.mosley@databricks.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      app_name: dao-ai-shared
