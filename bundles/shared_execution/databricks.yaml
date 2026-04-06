@@ -3,6 +3,11 @@
 bundle:
   name: dao-ai-shared-execution
 
+sync:
+  include:
+    - app.yaml
+    - "*.whl"
+
 variables:
   app_name:
     description: Name for the shared execution Databricks App.

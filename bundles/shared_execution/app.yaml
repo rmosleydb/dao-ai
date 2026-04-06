@@ -2,7 +2,7 @@ command:
   - /bin/bash
   - -c
   - |
-    pip install "git+https://github.com/rmosleydb/dao-ai.git" &&
+    pip install --index-url https://pypi-proxy.dev.databricks.com/simple/ ./dao_ai-0.1.40-py3-none-any.whl &&
     python -m dao_ai.apps.shared_server
 # Databricks Apps listen by default on port 8000
 
